@@ -4,12 +4,10 @@ package com.lojas.virtualStore.controller;
 import com.lojas.virtualStore.domain.ProdutoDomain;
 import com.lojas.virtualStore.service.ProdutoService;
 import com.lojas.virtualStore.service.ResourceNotFoundException;
-import com.sun.org.slf4j.internal.Logger;
-import com.sun.org.slf4j.internal.LoggerFactory;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.Getter;
-import org.hibernate.validator.constraints.SafeHtml;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,10 +15,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.awt.*;
+
 
 @RestController
 @RequestMapping("/api")
@@ -33,9 +37,11 @@ public class ProdutoController {
     private ProdutoService produtoService;
     
     
-
+	
+	@Operation(summary="Busca uma lista de produtos",description="Realiza a busca de todos os produtos, utilizando a paginação")
     @GetMapping(value = "/produtos", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ProdutoDomain>> findAll(
+    		@Parameter(description = "Nome do produto")
             @RequestBody(required = false) String nome, Pageable pageable){
         if(StringUtils.isEmpty(nome)){
             return ResponseEntity.ok(produtoService.findAll(pageable));
