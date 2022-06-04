@@ -3,19 +3,24 @@ package com.lojas.virtualStore.controller;
 
 import com.lojas.virtualStore.domain.ProdutoDomain;
 import com.lojas.virtualStore.service.ProdutoService;
+import com.lojas.virtualStore.service.ResourceNotFoundException;
+import com.sun.org.slf4j.internal.Logger;
 import com.sun.org.slf4j.internal.LoggerFactory;
+
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.Getter;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.awt.*;
-import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api")
@@ -26,9 +31,10 @@ public class ProdutoController {
 
     @Autowired
     private ProdutoService produtoService;
+    
+    
 
-    @GetMapping(value = "/produtos", consumes = MediaType.APPLICATION_JSON_VALUE,
-            produces = MediaType.APPLICATION_JSON_VALUE);
+    @GetMapping(value = "/produtos", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Page<ProdutoDomain>> findAll(
             @RequestBody(required = false) String nome, Pageable pageable){
         if(StringUtils.isEmpty(nome)){
@@ -37,13 +43,23 @@ public class ProdutoController {
             return ResponseEntity.ok(produtoService.findAllByNome(nome, pageable));
         }
     }
+    
+    
+    
 
     @GetMapping(value = "/produto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ProdutoDomain> findProdutosById(@PathVariable long id){
 
-        /*try{
+        try{
+        	ProdutoDomain produtoDomain = produtoService.findById(id);
+        	return ResponseEntity.ok(produtoDomain);
 
-        }*/
+        }catch(ResourceNotFoundException ex) {
+        	logger.error(ex.getMessage());
+        	
+        	throw new ResponseStatusException(
+        			HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+        }
     }
 
 }
