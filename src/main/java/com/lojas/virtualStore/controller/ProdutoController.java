@@ -1,11 +1,14 @@
 package com.lojas.virtualStore.controller;
 
 
-import com.lojas.virtualStore.domain.ProdutoDomain;
+import com.lojas.virtualStore.domain.Produto;
+import com.lojas.virtualStore.service.BadResourceException;
 import com.lojas.virtualStore.service.ProdutoService;
+import com.lojas.virtualStore.service.ResourceAlreadyExistsException;
 import com.lojas.virtualStore.service.ResourceNotFoundException;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,15 +18,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.validation.Valid;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 
 @RestController
@@ -40,7 +42,7 @@ public class ProdutoController {
 	
 	@Operation(summary="Busca uma lista de produtos",description="Realiza a busca de todos os produtos, utilizando a paginação")
     @GetMapping(value = "/produtos", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<ProdutoDomain>> findAll(
+    public ResponseEntity<Page<Produto>> findAll(
     		@Parameter(description = "Nome do produto")
             @RequestBody(required = false) String nome, Pageable pageable){
         if(StringUtils.isEmpty(nome)){
@@ -54,11 +56,11 @@ public class ProdutoController {
     
 
     @GetMapping(value = "/produto/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<ProdutoDomain> findProdutosById(@PathVariable long id){
+    public ResponseEntity<Produto> findProdutosById(@PathVariable long id){
 
         try{
-        	ProdutoDomain produtoDomain = produtoService.findById(id);
-        	return ResponseEntity.ok(produtoDomain);
+        	Produto produto = produtoService.findById(id);
+        	return ResponseEntity.ok(produto);
 
         }catch(ResourceNotFoundException ex) {
         	logger.error(ex.getMessage());
@@ -67,5 +69,54 @@ public class ProdutoController {
         			HttpStatus.NOT_FOUND, ex.getMessage(), ex);
         }
     }
+
+    @PostMapping(value = "/produto")
+    public  ResponseEntity<Produto> addProduto(@RequestBody Produto produto)
+        throws URISyntaxException{
+
+        try{
+            Produto novoProduto = produtoService.save(produto);
+            return ResponseEntity.created(new URI("/api/produto/" + novoProduto.getId())).body(produto);
+
+        }catch (ResourceAlreadyExistsException ex){
+            logger.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }catch (BadResourceException ex){
+            logger.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+    @PutMapping(value = "/produto/{id}")
+    public ResponseEntity<Produto> updateProduto(@Valid @RequestBody Produto produto,
+                                                 @PathVariable long id){
+        try{
+            produto.setId(id);
+            produtoService.update(produto);
+            return ResponseEntity.ok().build();
+        }catch (ResourceNotFoundException ex){
+            logger.error(ex.getMessage());
+            return ResponseEntity.notFound().build();
+        }catch (BadResourceException ex){
+            logger.error(ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+    }
+
+
+
+    @DeleteMapping(value = "/produto/{id}")
+    public ResponseEntity<Void> deleProdutoById(@PathVariable long id){
+
+        try {
+            produtoService.deletedById(id);
+            return ResponseEntity.ok().build();
+        }catch(ResourceNotFoundException ex){
+            logger.error(ex.getMessage());
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+        }
+
+    }
+
 
 }

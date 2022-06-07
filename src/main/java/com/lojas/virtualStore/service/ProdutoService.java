@@ -1,6 +1,6 @@
 package com.lojas.virtualStore.service;
 
-import com.lojas.virtualStore.domain.ProdutoDomain;
+import com.lojas.virtualStore.domain.Produto;
 import com.lojas.virtualStore.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,23 +18,23 @@ public class ProdutoService {
         return produtoRepository.existsById(id);
     }
 
-    public ProdutoDomain findById(Long id) throws ResourceNotFoundException{
-        ProdutoDomain domain = produtoRepository.findById(id).orElse(null);
+    public Produto findById(Long id) throws ResourceNotFoundException{
+        Produto domain = produtoRepository.findById(id).orElse(null);
         if(domain==null){
             throw new ResourceNotFoundException("Produto não informado com o id: " + id);
         }else return domain;
     }
 
-    public Page<ProdutoDomain> findAll(Pageable pageable){
+    public Page<Produto> findAll(Pageable pageable){
         return produtoRepository.findAll(pageable);
     }
 
-    public Page<ProdutoDomain> findAllByNome(String nome, Pageable page){
-        Page<ProdutoDomain> domains = produtoRepository.findByNome(nome, page);
+    public Page<Produto> findAllByNome(String nome, Pageable page){
+        Page<Produto> domains = produtoRepository.findByNome(nome, page);
         return domains;
     }
 
-    public ProdutoDomain save(ProdutoDomain domain) throws BadResourceException, ResourceAlreadyExistsException{
+    public Produto save(Produto domain) throws BadResourceException, ResourceAlreadyExistsException{
         if(!StringUtils.isEmpty(domain.getNome())){
             if(domain.getId()!=null && existsById(domain.getId())){
                 throw new ResourceAlreadyExistsException("Produto com id: " +domain.getId() + "já existe");
@@ -46,7 +46,7 @@ public class ProdutoService {
         }
     }
 
-    public void update(ProdutoDomain domain)
+    public void update(Produto domain)
         throws BadResourceException, ResourceNotFoundException{
         if(!StringUtils.isEmpty(domain.getId())){
             if(!existsById(domain.getId())){
@@ -58,6 +58,18 @@ public class ProdutoService {
             exc.addErrorMessage("Produto está nulo ou em branco");
             throw exc;
         }
+    }
+
+    public void deletedById(Long id) throws ResourceNotFoundException{
+        if(!existsById(id)){
+            throw new ResourceNotFoundException("Produto não encotrado com i id: " + id);
+        }else {
+            produtoRepository.deleteById(id);
+        }
+    }
+
+    public Long count(){
+        return  produtoRepository.count();
     }
 
 }
