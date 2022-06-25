@@ -34,7 +34,7 @@ public class Usuario implements Serializable {
     private String telefone;
 
     @Column(name = "cpf_cnpj")
-    private String cpfCnpf;
+    private String cpfCnpj;
 
     @Column(name = "endereço")
     private String endereca;
@@ -56,5 +56,9 @@ public class Usuario implements Serializable {
 
     @Column(name = "complemento")
     private String complemento;
+    
+    @Lob @Basic(fetch = FetchType.LAZY)
+    @Column(name = "imagem_de_perfil", length = 16777215)
+    private byte[] imagemDePerfil;
 
 }
