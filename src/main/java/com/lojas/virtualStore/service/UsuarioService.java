@@ -1,5 +1,6 @@
 package com.lojas.virtualStore.service;
 
+import com.lojas.virtualStore.DTO.UsuarioDTO;
 import com.lojas.virtualStore.domain.Usuario;
 import com.lojas.virtualStore.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,25 +35,30 @@ public class UsuarioService {
         }else return domain;
     }
 
-    public Page<Usuario> findAll(Pageable pageable){
-        return usuarioRepository.findAll(pageable);
+    public Page<UsuarioDTO> findAll(Pageable pageable){
+    	Page<Usuario> domains = usuarioRepository.findAll(pageable);
+    	UsuarioDTO usuarioDTO = new UsuarioDTO();
+        Page<UsuarioDTO> usuarioListDTO = usuarioDTO.converterListaUsuarioDTO(domains);
+        return usuarioListDTO;
     }
 
-    public Page<Usuario> findAllByCpfCnpj(String cpfCnpj, Pageable page){
+    public Page<UsuarioDTO> findAllByCpfCnpj(String cpfCnpj, Pageable page){
         Page<Usuario> domains = usuarioRepository.findByCpfCnpj(cpfCnpj, page);
-        return domains;
+        UsuarioDTO usuarioDTO = new UsuarioDTO();
+        Page<UsuarioDTO> usuarioListDTO = usuarioDTO.converterListaUsuarioDTO(domains);
+        return usuarioListDTO;
     }
 
     public Usuario save(Usuario domain) throws BadResourceException, ResourceAlreadyExistsException{
-        if(!StringUtils.isEmpty(domain.getCpfCnpf())){
+        if(!StringUtils.isEmpty(domain.getCpfCnpj())){
             if(domain.getId()!=null && existsById(domain.getId())){
                 throw new ResourceAlreadyExistsException("Usuario com id: " +domain.getId() + "já existe");
             }
             if(domain.getEmail()!=null && existsByEmail(domain.getEmail())) {
                 throw new ResourceAlreadyExistsException("Email já cadastrado: " + domain.getEmail());
             }
-            if(domain.getCpfCnpf()!=null && existsByCpfCnpj(domain.getCpfCnpf())){
-                throw new ResourceAlreadyExistsException("CFP/CNPJ já cadastrado: " + domain.getCpfCnpf());
+            if(domain.getCpfCnpj()!=null && existsByCpfCnpj(domain.getCpfCnpj())){
+                throw new ResourceAlreadyExistsException("CFP/CNPJ já cadastrado: " + domain.getCpfCnpj());
             }
             return usuarioRepository.save(domain);
         }else {

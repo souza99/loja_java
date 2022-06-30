@@ -1,5 +1,6 @@
 package com.lojas.virtualStore.controller;
 
+import com.lojas.virtualStore.DTO.UsuarioDTO;
 import com.lojas.virtualStore.domain.Usuario;
 import com.lojas.virtualStore.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -36,7 +37,7 @@ public class UsuarioController {
 
     @Operation(summary = "Busca uma lista de usuarios", description = "Busca uma lista de produtos com por nome ou geral")
     @GetMapping(value = "/usuarios", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Page<Usuario>> findAll(
+    public ResponseEntity<Page<UsuarioDTO>> findAll(
             @Parameter(description = "Nome do cpf_cnpj")
             @RequestBody(required = false) String cpfCnpj, Pageable pageable){
         if(StringUtils.isEmpty(cpfCnpj)){
