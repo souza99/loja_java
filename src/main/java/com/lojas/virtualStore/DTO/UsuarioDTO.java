@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 package com.lojas.virtualStore.DTO;
 
 import org.springframework.beans.BeanUtils;
