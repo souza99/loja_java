@@ -35,30 +35,14 @@ public class Usuario implements Serializable {
 
     @Column(name = "cpf_cnpj")
     private String cpfCnpj;
-
-    @Column(name = "endereço")
-    private String endereca;
-
-    @Column(name = "cidade")
-    private String cidade;
-
-    @Column(name = "estado")
-    private String estado;
-
-    @Column(name = "bairro")
-    private String bairro;
-
-    @Column(name = "rua")
-    private String rua;
-
-    @Column(name = "numero_rua")
-    private String numeroRua;
-
-    @Column(name = "complemento")
-    private String complemento;
     
     @Lob @Basic(fetch = FetchType.LAZY)
     @Column(name = "imagem_de_perfil", length = 16777215)
     private byte[] imagemDePerfil;
+    
+    
+    @Column(name = "enderecos")
+    @ManyToOne(cascade=CascadeType.ALL)  
+    private Endereco enderecos;
 
 }
