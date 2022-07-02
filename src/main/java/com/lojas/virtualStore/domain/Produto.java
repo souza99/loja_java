@@ -29,12 +29,17 @@ public class Produto implements Serializable {
     @NotBlank
     private String nome;
     private String marca;
-
-
+    
     @Column(name = "valor")
     private double valor;
 
     @Column(name = "descricao")
     private String descricao;
+    
+    @Column(name = "valor_venda")
+    private Double valorVenda;
+    
+    @Column(name = "valor_custo")
+    private Double valorCusto;
 
 }

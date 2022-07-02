@@ -1,6 +1,8 @@
 package com.lojas.virtualStore.service;
 
 import com.lojas.virtualStore.domain.Produto;
+import com.lojas.virtualStore.domain.ProdutoPreco;
+import com.lojas.virtualStore.repository.ProdutoPrecoRepository;
 import com.lojas.virtualStore.repository.ProdutoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,6 +15,10 @@ public class ProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
+    private ProdutoPrecoRepository produtoPrecoRepository;
+    
+    
+    private ProdutoPrecoService produtoPrecoService;
 
     private boolean existsById(Long id){
         return produtoRepository.existsById(id);
@@ -39,7 +45,16 @@ public class ProdutoService {
             if(domain.getId()!=null && existsById(domain.getId())){
                 throw new ResourceAlreadyExistsException("Produto com id: " +domain.getId() + "já existe");
             }
-            return produtoRepository.save(domain);
+            produtoRepository.save(domain);
+            
+            //Salva produto preco no banco
+            ProdutoPreco produtoPreco = new ProdutoPreco();
+            produtoPreco.setProduto(domain);
+            produtoPreco.setValorCusto(domain.getValorCusto());
+            produtoPreco.setValorVenda(domain.getValorVenda());
+            produtoPrecoRepository.save(produtoPreco);
+            
+            return domain;
         }else {
             BadResourceException exc = new BadResourceException("Erro ao salvar o produto");
             throw exc;
@@ -53,6 +68,8 @@ public class ProdutoService {
                 throw new ResourceNotFoundException("Produto não encontrado com o id: " + domain.getId());
             }
             produtoRepository.save(domain);
+            
+            
         }else{
             BadResourceException exc = new BadResourceException("Falha ao salvar o produto");
             exc.addErrorMessage("Produto está nulo ou em branco");

@@ -1,7 +1,10 @@
 package com.lojas.virtualStore.service;
 
 import com.lojas.virtualStore.DTO.UsuarioDTO;
+import com.lojas.virtualStore.domain.Permissao;
+import com.lojas.virtualStore.domain.PermissaoUsuario;
 import com.lojas.virtualStore.domain.Usuario;
+import com.lojas.virtualStore.repository.PermissaoRepository;
 import com.lojas.virtualStore.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -14,6 +17,8 @@ public class UsuarioService {
 
     @Autowired
     private UsuarioRepository usuarioRepository;
+    
+    private PermissaoRepository permissaoRepository;
 
 
     private boolean existsById(Long id){
@@ -50,7 +55,9 @@ public class UsuarioService {
     }
 
     public Usuario save(Usuario domain) throws BadResourceException, ResourceAlreadyExistsException{
+    	
         if(!StringUtils.isEmpty(domain.getCpfCnpj())){
+        	
             if(domain.getId()!=null && existsById(domain.getId())){
                 throw new ResourceAlreadyExistsException("Usuario com id: " +domain.getId() + "já existe");
             }

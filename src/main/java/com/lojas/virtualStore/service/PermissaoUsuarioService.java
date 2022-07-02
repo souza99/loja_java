@@ -25,7 +25,7 @@ public class PermissaoUsuarioService {
         return permissaoUsuarioRepository.findAll(pageable);
     }
    
-    public PermissaoUsuario save(PermissaoUsuario permissaoUsuario)  {
+    public PermissaoUsuario save(PermissaoUsuario permissaoUsuario) {
             return permissaoUsuarioRepository.save(permissaoUsuario);
     }
     
