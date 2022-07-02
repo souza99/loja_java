@@ -1,5 +1,7 @@
 package com.lojas.virtualStore.domain;
 
+import java.io.Serializable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -19,7 +21,7 @@ import lombok.Setter;
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
-public class Marca {
+public class Marca implements Serializable{
 	  private static final long serialVersionUID = 1L;
 	
 	@Id

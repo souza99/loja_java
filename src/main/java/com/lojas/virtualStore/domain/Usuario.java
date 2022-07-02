@@ -8,6 +8,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "Usuario")
@@ -40,9 +41,7 @@ public class Usuario implements Serializable {
     @Column(name = "imagem_de_perfil", length = 16777215)
     private byte[] imagemDePerfil;
     
-    
-    @Column(name = "enderecos")
-    @ManyToOne(cascade=CascadeType.ALL)  
-    private Endereco enderecos;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date dataCadastro = new Date();
 
 }
