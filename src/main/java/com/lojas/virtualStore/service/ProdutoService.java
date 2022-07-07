@@ -4,6 +4,9 @@ import com.lojas.virtualStore.domain.Produto;
 import com.lojas.virtualStore.domain.ProdutoPreco;
 import com.lojas.virtualStore.repository.ProdutoPrecoRepository;
 import com.lojas.virtualStore.repository.ProdutoRepository;
+
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -87,6 +90,32 @@ public class ProdutoService {
 
     public Long count(){
         return  produtoRepository.count();
+    }
+    
+    
+    public void atualizarValorProdutoCategoria(Long idCategoria, Double percentual, String tipoOperacao) {
+    	List<Produto> produtos = produtoRepository.buscaProdutoPorCategoria(idCategoria);
+    	
+    	for(Produto produto: produtos) {
+    		if(tipoOperacao == "desconto") {
+    			Double desconto = produto.getValorVenda() * (percentual / 100);
+    			Double valorDescontado = produto.getValorVenda() - desconto;
+    			produto.setValorVenda(valorDescontado);
+    		}else{
+    			if(tipoOperacao == "aumento") {
+    				Double aumento = produto.getValorVenda() * (percentual/100);
+    				Double valorAgregado = produto.getValorVenda() - aumento;
+    				produto.setValorVenda(valorAgregado);
+    			}
+    		}
+    		try {
+				update(produto);
+			} catch (BadResourceException | ResourceNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	
     }
 
 }

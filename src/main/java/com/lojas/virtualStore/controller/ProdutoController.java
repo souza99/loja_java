@@ -117,6 +117,13 @@ public class ProdutoController {
         }
 
     }
+    
+    @GetMapping(path="/buscaProdutoPorCategoria")
+    //localhost:8080/api/produto/atualizarValorCategoria?percentual=5&idCategoria=1&tipoOperacao=desconto
+    public ResponseEntity<Void> buscaProdutoPorCategoria(@RequestParam Double percentual, @RequestParam Long idCategoria, @RequestParam String tipoOperacao){
+    	produtoService.atualizarValorProdutoCategoria(idCategoria, percentual, tipoOperacao);
+    	return ResponseEntity.ok().build();
+    }
 
 
 }

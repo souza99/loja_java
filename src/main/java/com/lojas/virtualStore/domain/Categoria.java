@@ -1,5 +1,6 @@
 package com.lojas.virtualStore.domain;
 
+
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.Cache;
@@ -17,37 +18,18 @@ import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 
 @Entity
-@Table(name = "produto")
+@Table(name = "categoria")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @Getter
 @Setter
-public class Produto implements Serializable {
+public class Categoria implements Serializable {
     private static final long serialVersionUID = 1L;
+	
+	  	@Id
+	    @GeneratedValue(strategy=GenerationType.IDENTITY)
+	    private Long id;
 
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
-
-    @NotBlank
-    private String nome;
-    
-    private String marca;
-    
-    @Column(name = "valor")
-    private double valor;
-
-    @Column(name = "descricao")
-    private String descricao;
-    
-    @Column(name = "valor_venda")
-    private Double valorVenda;
-    
-    @Column(name = "valor_custo")
-    private Double valorCusto;
-    
-    @ManyToOne
-    @JoinColumn(name = "categoria")
-    private Categoria categoria;
-    
+	    @NotBlank
+	    private String nome;
 
 }
